@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema(
     stopPlaces: { type: Array, required: true },
     busRouteNumber: { type: String, required: true },
   },
-  { collection: "routes1" }
+  { collection: "routes" }
 );
 
 module.exports = mongoose.model("Route", userSchema);
