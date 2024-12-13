@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 require("dotenv").config();
+const cors = require("cors");
 
 // paths
 const authRoutes = require("./routes/auth-route");
@@ -21,6 +22,7 @@ app.use("/buses", busRoutes);
 app.use("/trips", tripRoutes);
 app.use("/reservations", reservationRoutes);
 app.use("/bookings", bookingRoutes);
+app.use(cors());
 
 mongoose
   .connect(process.env.MONGO_URI, {
