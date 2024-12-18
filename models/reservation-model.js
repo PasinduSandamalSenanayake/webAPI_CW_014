@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema(
     destinationTo: { type: String, required: true }, // Should match "reservationTo"
     destinationFrom: { type: String, required: true }, // Should match "reservationFrom"
     seatCount: { type: Number, required: true, default: 1 },
+    selectSeats: { type: Array, required: true },
     routeId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Route",

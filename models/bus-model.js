@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema(
     },
     busNumber: { type: String, required: true, unique: true },
     seatCount: { type: Number, required: true },
-    busStatus: { type: String, required: true },
+    seatArray: { type: Array },
   },
   { collection: "bus" }
 );

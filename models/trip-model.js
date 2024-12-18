@@ -15,6 +15,8 @@ const userSchema = new mongoose.Schema(
       ref: "Bus",
       required: true,
     },
+    availableSeats: { type: Number, required: true },
+    availableSeatArray: { type: Array },
   },
   { collection: "trip" }
 );

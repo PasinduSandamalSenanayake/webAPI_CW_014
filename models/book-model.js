@@ -17,7 +17,8 @@ const userSchema = new mongoose.Schema(
       ref: "Reservation",
       required: true,
     },
-    bookedSeats: { type: Array, required: true },
+    bookedSeats: { type: Number, required: true },
+    bookedSeatArray: { type: Array },
   },
   { collection: "booking" }
 );

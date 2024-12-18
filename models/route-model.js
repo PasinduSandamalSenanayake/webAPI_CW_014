@@ -6,6 +6,9 @@ const userSchema = new mongoose.Schema(
     endPlace: { type: String, required: true },
     stopPlaces: { type: Array, required: true },
     busRouteNumber: { type: String, required: true },
+    priceOne: { type: Number, required: true },
+    priceTwo: { type: Number, required: true },
+    priceThree: { type: Number, required: true },
   },
   { collection: "routes" }
 );
