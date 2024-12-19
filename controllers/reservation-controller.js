@@ -56,11 +56,11 @@ exports.getAllReservations = async (req, res) => {
     const reservation = await Reservations.find();
 
     const enrichedReservations = await Promise.all(
-      reservation.map(async (trip) => {
+      reservation.map(async (reservation) => {
         try {
           // route details
           const routeResponse = await axios.get(
-            `https://webapi-cw-014-183873252446.asia-south1.run.app/routes/${trip.routeId}`
+            `https://webapi-cw-014-183873252446.asia-south1.run.app/routes/${reservation.routeId}`
           );
           const routeNumber = routeResponse.data.route.busRouteNumber;
           const startPlace = routeResponse.data.route.startPlace;
@@ -68,10 +68,16 @@ exports.getAllReservations = async (req, res) => {
 
           // bus details
           const busResponse = await axios.get(
-            `https://webapi-cw-014-183873252446.asia-south1.run.app/buses/${trip.busId}`
+            `https://webapi-cw-014-183873252446.asia-south1.run.app/buses/${reservation.busId}`
           );
           const busNumber = busResponse.data.data.busNumber;
           const seatCount = busResponse.data.data.seatCount;
+
+          // trip details
+          const tripResponse = await axios.get(
+            `https://webapi-cw-014-183873252446.asia-south1.run.app/trips/${reservation.tripId}`
+          );
+          const startTime = tripResponse.data.data.startTime;
 
           return {
             ...reservation.toObject(),
@@ -80,6 +86,7 @@ exports.getAllReservations = async (req, res) => {
             endPlace,
             busNumber,
             seatCount,
+            startTime,
           };
         } catch (error) {
           console.error(
@@ -92,6 +99,7 @@ exports.getAllReservations = async (req, res) => {
             endPlace: "Unknown",
             busNumber: "Unknown",
             seatCount: "Unknown",
+            startTime: "Unknown",
           };
         }
       })
@@ -109,13 +117,75 @@ exports.getAllReservations = async (req, res) => {
 // Get a reservation by id
 exports.getReservationById = async (req, res) => {
   try {
-    const reservation = await Reservations.findById(req.params.id);
+    const reservationId = req.params.id; // Assuming the reservation ID is passed as a URL parameter
+    const reservation = await Reservations.findById(reservationId);
+
     if (!reservation) {
-      return res.status(404).json({ message: "Reservation not found" });
+      return res.status(404).json({
+        message: "Reservation not found",
+      });
     }
-    res.status(200).json({ data: reservation });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+
+    try {
+      // Route details
+      const routeResponse = await axios.get(
+        `https://webapi-cw-014-183873252446.asia-south1.run.app/routes/${reservation.routeId}`
+      );
+      const routeNumber = routeResponse.data.route.busRouteNumber;
+      const startPlace = routeResponse.data.route.startPlace;
+      const endPlace = routeResponse.data.route.endPlace;
+
+      // Bus details
+      const busResponse = await axios.get(
+        `https://webapi-cw-014-183873252446.asia-south1.run.app/buses/${reservation.busId}`
+      );
+      const busNumber = busResponse.data.data.busNumber;
+      const seatCount = busResponse.data.data.seatCount;
+
+      // Trip details
+      const tripResponse = await axios.get(
+        `https://webapi-cw-014-183873252446.asia-south1.run.app/trips/${reservation.tripId}`
+      );
+      const startTime = tripResponse.data.data.startTime;
+
+      // Combine all details
+      const enrichedReservation = {
+        ...reservation.toObject(),
+        routeNumber,
+        startPlace,
+        endPlace,
+        busNumber,
+        seatCount,
+        startTime,
+      };
+
+      res.status(200).json({
+        message: "Success",
+        data: enrichedReservation,
+      });
+    } catch (error) {
+      console.error(
+        `Error fetching additional details for reservation ID: ${reservationId}`,
+        error.message
+      );
+
+      const partialReservation = {
+        ...reservation.toObject(),
+        routeNumber: "Unknown",
+        startPlace: "Unknown",
+        endPlace: "Unknown",
+        busNumber: "Unknown",
+        seatCount: "Unknown",
+        startTime: "Unknown",
+      };
+
+      res.status(200).json({
+        message: "Partial success, some details are missing",
+        data: partialReservation,
+      });
+    }
+  } catch (err) {
+    res.status(400).send(err.message);
   }
 };
 

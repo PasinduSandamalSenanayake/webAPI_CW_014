@@ -101,13 +101,65 @@ exports.get_all_trips = async (req, res) => {
 // Get a trip by id
 exports.get_trip_by_id = async (req, res) => {
   try {
-    const trip = await Trips.findById(req.params.id);
+    const tripId = req.params.id; // Assuming the trip ID is passed as a URL parameter
+    const trip = await Trips.findById(tripId);
+
     if (!trip) {
-      return res.status(404).json({ message: "Trip not found" });
+      return res.status(404).json({
+        message: "Trip not found",
+      });
     }
-    res.status(200).json({ data: trip });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+
+    try {
+      // Route details
+      const routeResponse = await axios.get(
+        `https://webapi-cw-014-183873252446.asia-south1.run.app/routes/${trip.routeId}`
+      );
+      const startPlace = routeResponse.data.route.startPlace;
+      const endPlace = routeResponse.data.route.endPlace;
+
+      // Bus details
+      const busResponse = await axios.get(
+        `https://webapi-cw-014-183873252446.asia-south1.run.app/buses/${trip.busId}`
+      );
+      const busNumber = busResponse.data.data.busNumber;
+      const seatCount = busResponse.data.data.seatCount;
+
+      // Combine the enriched trip details
+      const enrichedTrip = {
+        ...trip.toObject(),
+        startPlace,
+        endPlace,
+        busNumber,
+        seatCount,
+      };
+
+      res.status(200).json({
+        message: "Success",
+        data: enrichedTrip,
+      });
+    } catch (error) {
+      console.error(
+        `Error fetching additional details for trip ID: ${tripId}`,
+        error.message
+      );
+
+      // Return partial data if enrichment fails
+      const partialTrip = {
+        ...trip.toObject(),
+        startPlace: "Unknown",
+        endPlace: "Unknown",
+        busNumber: "Unknown",
+        seatCount: "Unknown",
+      };
+
+      res.status(200).json({
+        message: "Partial success, some details are missing",
+        data: partialTrip,
+      });
+    }
+  } catch (err) {
+    res.status(400).send(err.message);
   }
 };
 
