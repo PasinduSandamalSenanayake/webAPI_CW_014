@@ -8,20 +8,18 @@ const userSchema = new mongoose.Schema(
     seatCount: { type: Number, required: true, default: 1 },
     selectSeats: { type: Array, required: true },
     routeId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Route",
+      type: String,
       required: true,
     },
     busId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Bus",
+      type: String,
       required: true,
     },
     tripId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Trip",
+      type: String,
       required: true,
     },
+    price: { type: Number },
   },
   { collection: "reservation" }
 );

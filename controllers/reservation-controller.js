@@ -1,63 +1,135 @@
-const Reservation = require("../models/reservation-model");
+const Reservations = require("../models/reservation-model");
 const Bus = require("../models/bus-model");
 const Route = require("../models/route-model");
 const Trip = require("../models/trip-model");
+const axios = require("axios");
 
 exports.createReservation = async (req, res) => {
+  const {
+    destinationTo,
+    destinationFrom,
+    seatCount,
+    selectSeats,
+    routeId,
+    busId,
+    tripId,
+    price,
+  } = req.body;
+
+  // Validate required fields
+  if (
+    !destinationTo ||
+    !destinationFrom ||
+    !seatCount ||
+    !selectSeats ||
+    !routeId ||
+    !busId ||
+    !tripId
+  ) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
   try {
-    const bus = await Bus.findById(req.body.busId);
-    if (!bus) {
-      return res.status(404).json({ message: "Bus not found" });
-    }
-
-    const route = await Route.findById(req.body.routeId);
-    if (!route) {
-      return res.status(404).json({ message: "Route not found" });
-    }
-
-    const trip = await Trip.findById(req.body.tripId);
-    if (!trip) {
-      return res.status(404).json({ message: "Trip not found" });
-    }
-
-    const newReservation = new Reservation(req.body);
-    const savedReservation = await newReservation.save();
-    res.status(201).json({
-      message: "Reservation created successfully",
-      data: savedReservation,
+    // Attempt to create and save the bus
+    const reservation = new Reservations({
+      destinationTo,
+      destinationFrom,
+      seatCount,
+      selectSeats,
+      routeId,
+      busId,
+      tripId,
+      price,
     });
+    await reservation.save();
+    res
+      .status(201)
+      .json({ message: "Reservation created successfully", data: reservation });
   } catch (error) {
+    // Handle other errors
     res.status(500).json({ message: error.message });
   }
 };
 
 exports.getAllReservations = async (req, res) => {
   try {
-    const reservationData = await Reservation.find()
-      .populate({
-        path: "busId", // Populate the bus details
-        select: "busNumber", // Only include busNumber field
+    const reservation = await Reservations.find();
+
+    const enrichedReservations = await Promise.all(
+      reservation.map(async (trip) => {
+        try {
+          // route details
+          const routeResponse = await axios.get(
+            `https://webapi-cw-014-183873252446.asia-south1.run.app/routes/${trip.routeId}`
+          );
+          const routeNumber = routeResponse.data.route.busRouteNumber;
+          const startPlace = routeResponse.data.route.startPlace;
+          const endPlace = routeResponse.data.route.endPlace;
+
+          // bus details
+          const busResponse = await axios.get(
+            `https://webapi-cw-014-183873252446.asia-south1.run.app/buses/${trip.busId}`
+          );
+          const busNumber = busResponse.data.data.busNumber;
+          const seatCount = busResponse.data.data.seatCount;
+
+          return {
+            ...reservation.toObject(),
+            routeNumber,
+            startPlace,
+            endPlace,
+            busNumber,
+            seatCount,
+          };
+        } catch (error) {
+          console.error(
+            `Error fetching user details for routeId: ${trip.routeId}`,
+            error.message
+          );
+          return {
+            ...reservation.toObject(),
+            startPlace: "Unknown",
+            endPlace: "Unknown",
+            busNumber: "Unknown",
+            seatCount: "Unknown",
+          };
+        }
       })
-      .populate({
-        path: "routeId", // Populate the route details
-        select: "startPlace",
-      })
-      .populate({
-        path: "tripId", // Populate the trip details
-        select: "startTime",
-      });
+    );
 
     res.status(200).json({
-      message: "All reservations",
-      data: reservationData, // Returns reservations with populated fields
+      message: "Success",
+      data: enrichedReservations,
     });
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+};
+
+// Get a reservation by id
+exports.getReservationById = async (req, res) => {
+  try {
+    const reservation = await Reservations.findById(req.params.id);
+    if (!reservation) {
+      return res.status(404).json({ message: "Reservation not found" });
+    }
+    res.status(200).json({ data: reservation });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-  //   try {
-  //     const reservations = await Reservation.find();
-  //     res.status(200).json({ data: reservations });
-  //   } catch (error) {
-  //     res.status(500).json({ message: error.message });
-  //   }
+};
+
+// delete a reservation
+exports.deleteReservation = async (req, res) => {
+  try {
+    const deletedReservation = await Reservations.findByIdAndDelete(
+      req.params.id
+    );
+    if (!deletedReservation) {
+      return res.status(404).json({ message: "Reservation not found" });
+    }
+    res.status(200).json({ message: "Reservation deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
