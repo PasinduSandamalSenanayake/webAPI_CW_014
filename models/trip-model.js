@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { tripDB } = require("../database/db");
 
 const userSchema = new mongoose.Schema(
   {
@@ -6,12 +7,12 @@ const userSchema = new mongoose.Schema(
     endTime: { type: String, required: true },
     date: { type: Date, required: true },
     routeId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       ref: "Route",
       required: true,
     },
     busId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       ref: "Bus",
       required: true,
     },
@@ -21,4 +22,4 @@ const userSchema = new mongoose.Schema(
   { collection: "trip" }
 );
 
-module.exports = mongoose.model("Trip", userSchema);
+module.exports = tripDB.model("Trip", userSchema);

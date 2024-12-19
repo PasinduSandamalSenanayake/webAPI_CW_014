@@ -1,17 +1,19 @@
 const Buses = require("../models/bus-model");
 
-// Create a new bus
 exports.create_bus = async (req, res) => {
-  const { busType, busNumber, seatCount, busStatus } = req.body;
+  const { busType, busNumber, seatCount } = req.body;
 
   // Validate required fields
-  if (!busType || !busNumber || !seatCount || !busStatus) {
+  if (!busType || !busNumber || !seatCount) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
+    // Generate seatArray from 1 to seatCount
+    const seatArray = Array.from({ length: seatCount }, (_, i) => i + 1);
+
     // Attempt to create and save the bus
-    const bus = new Buses({ busType, busNumber, seatCount, busStatus });
+    const bus = new Buses({ busType, busNumber, seatCount, seatArray });
     await bus.save();
     res.status(201).json({ message: "Bus created successfully", data: bus });
   } catch (error) {

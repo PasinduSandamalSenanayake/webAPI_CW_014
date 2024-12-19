@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { bookingDB } = require("../database/db");
 
 const userSchema = new mongoose.Schema(
   {
@@ -23,4 +24,4 @@ const userSchema = new mongoose.Schema(
   { collection: "booking" }
 );
 
-module.exports = mongoose.model("Booking", userSchema);
+module.exports = bookingDB.model("Booking", userSchema);

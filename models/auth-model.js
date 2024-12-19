@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { userDB } = require("../database/db");
 
 const userSchema = new mongoose.Schema(
   {
@@ -18,4 +19,4 @@ const userSchema = new mongoose.Schema(
   { collection: "user" }
 );
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = userDB.model("User", userSchema);

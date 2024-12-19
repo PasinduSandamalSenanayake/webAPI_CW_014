@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const { busDB } = require("../database/db");
 
 const userSchema = new mongoose.Schema(
   {
@@ -15,4 +16,4 @@ const userSchema = new mongoose.Schema(
   { collection: "bus" }
 );
 
-module.exports = mongoose.model("Bus", userSchema);
+module.exports = busDB.model("Bus", userSchema);

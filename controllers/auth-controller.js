@@ -20,6 +20,7 @@ exports.user_register = (req, res, next) => {
           if (err) {
             return res.status(500).json({
               error: err,
+              console: err,
             });
           } else {
             // Create a new user
