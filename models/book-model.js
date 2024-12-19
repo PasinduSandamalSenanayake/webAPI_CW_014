@@ -4,22 +4,18 @@ const { bookingDB } = require("../database/db");
 const userSchema = new mongoose.Schema(
   {
     tripId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Trip",
+      type: String,
       required: true,
     },
     busId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Bus",
+      type: String,
       required: true,
     },
     reservationId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Reservation",
+      type: String,
       required: true,
     },
-    bookedSeats: { type: Number, required: true },
-    bookedSeatArray: { type: Array },
+    confirm: { type: String, required: true },
   },
   { collection: "booking" }
 );

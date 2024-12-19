@@ -5,32 +5,29 @@ const Reservation = require("../models/reservation-model");
 
 // Create a new booking
 exports.create_booking = async (req, res) => {
-  Trip.findById(req.body.tripId).then((trip) => {
-    if (!trip) {
-      return res.status(404).json({ message: "Trip not found" });
-    }
-    Bus.findById(req.body.busId).then((bus) => {
-      if (!bus) {
-        return res.status(404).json({ message: "Bus not found" });
-      }
-      Reservation.findById(req.body.reservationId).then((reservation) => {
-        if (!reservation) {
-          return res.status(404).json({ message: "Reservation not found" });
-        }
-        const booking = new Booking(req.body);
-        const savedBooking = booking.save();
-        res
-          .status(201)
-          .json({
-            message: "Booking created successfully",
-            data: savedBooking,
-          })
-          .catch((error) => {
-            res.status(500).json({ message: error.message });
-          });
-      });
+  const { tripId, busId, reservationId, confirm } = req.body;
+
+  // Validate required fields
+  if (!reservationId || !confirm || !busId || !tripId) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    // Attempt to create and save the bus
+    const booking = new Booking({
+      tripId,
+      busId,
+      reservationId,
+      confirm,
     });
-  });
+    await booking.save();
+    res
+      .status(201)
+      .json({ message: "Booking created successfully", data: booking });
+  } catch (error) {
+    // Handle other errors
+    res.status(500).json({ message: error.message });
+  }
 };
 
 // Get all bookings
