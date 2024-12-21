@@ -31,7 +31,7 @@ exports.createReservation = async (req, res) => {
 
   try {
     const seatUpdateResponse = await axios.put(
-      `https://webapi-cw-014-183873252446.asia-south1.run.app/buses/${busId}/bookedSeats`,
+      `https://webapi-cw-014-183873252446.asia-south1.run.app/trips/${tripId}/bookedSeats`,
       { selectSeats }
     );
     if (seatUpdateResponse.status === 200) {
@@ -46,12 +46,10 @@ exports.createReservation = async (req, res) => {
         price,
       });
       await reservation.save();
-      res
-        .status(201)
-        .json({
-          message: "Reservation created successfully",
-          data: reservation,
-        });
+      res.status(201).json({
+        message: "Reservation created successfully",
+        data: reservation,
+      });
     } else {
       // Handle unexpected responses from seat update
       return res.status(400).json({
@@ -64,6 +62,7 @@ exports.createReservation = async (req, res) => {
       // Return error message from external service or validation
       return res.status(err.response.status).json({
         error: err.response.data.error,
+        errorCode: err.response.status,
       });
     }
     // Handle general errors
