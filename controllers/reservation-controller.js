@@ -30,24 +30,44 @@ exports.createReservation = async (req, res) => {
   }
 
   try {
+    const seatUpdateResponse = await axios.put(
+      `https://webapi-cw-014-183873252446.asia-south1.run.app/buses/${busId}/bookedSeats`,
+      { selectSeats }
+    );
+    if (seatUpdateResponse.status === 200) {
+      const reservation = new Reservations({
+        destinationTo,
+        destinationFrom,
+        seatCount,
+        selectSeats,
+        routeId,
+        busId,
+        tripId,
+        price,
+      });
+      await reservation.save();
+      res
+        .status(201)
+        .json({
+          message: "Reservation created successfully",
+          data: reservation,
+        });
+    } else {
+      // Handle unexpected responses from seat update
+      return res.status(400).json({
+        error: "Failed to update seats. Product creation aborted.",
+      });
+    }
     // Attempt to create and save the bus
-    const reservation = new Reservations({
-      destinationTo,
-      destinationFrom,
-      seatCount,
-      selectSeats,
-      routeId,
-      busId,
-      tripId,
-      price,
-    });
-    await reservation.save();
-    res
-      .status(201)
-      .json({ message: "Reservation created successfully", data: reservation });
-  } catch (error) {
-    // Handle other errors
-    res.status(500).json({ message: error.message });
+  } catch (err) {
+    if (err.response && err.response.data) {
+      // Return error message from external service or validation
+      return res.status(err.response.status).json({
+        error: err.response.data.error,
+      });
+    }
+    // Handle general errors
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 

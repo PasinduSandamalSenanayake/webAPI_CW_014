@@ -10,7 +10,10 @@ exports.create_bus = async (req, res) => {
 
   try {
     // Generate seatArray from 1 to seatCount
-    const seatArray = Array.from({ length: seatCount }, (_, i) => i + 1);
+    // const seatArray = Array.from({ length: seatCount }, (_, i) => i + 1);
+    const seatArray = Array.from({ length: seatCount }, (_, i) => ({
+      [i + 1]: "available",
+    }));
 
     // Attempt to create and save the bus
     const bus = new Buses({ busType, busNumber, seatCount, seatArray });

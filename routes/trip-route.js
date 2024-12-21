@@ -14,4 +14,6 @@ route.get("/:id", tripController.get_trip_by_id);
 // delele a trip
 route.delete("/:id", tripController.delete_trip);
 
+route.put("/:tripId/bookedSeats", tripController.update_seats);
+
 module.exports = route;

@@ -21,9 +21,15 @@ exports.create_trip = async (req, res) => {
 
   try {
     // Generate seatArray from 1 to seatCount
+    // const availableSeatArray = Array.from(
+    //   { length: availableSeats },
+    //   (_, i) => i + 1
+    // );
     const availableSeatArray = Array.from(
       { length: availableSeats },
-      (_, i) => i + 1
+      (_, i) => ({
+        [i + 1]: "available",
+      })
     );
 
     // Attempt to create and save the bus
@@ -173,5 +179,44 @@ exports.delete_trip = async (req, res) => {
     res.status(200).json({ message: "Trip deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+exports.update_seats = async (req, res) => {
+  const { selectSeats } = req.body; // Array of seat numbers
+  const { tripId } = req.params;
+
+  try {
+    const trip = await Trips.findById(tripId);
+    if (!trip) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Find seats that are already booked
+    const alreadyBookedSeats = [];
+    selectSeats.forEach((seatNum) => {
+      const seatStatus = user.seatArray[seatNum - 1];
+      if (seatStatus && seatStatus[seatNum] === "booked") {
+        alreadyBookedSeats.push(seatNum);
+      }
+    });
+
+    if (alreadyBookedSeats.length > 0) {
+      return res.status(400).json({
+        error: `Seats ${alreadyBookedSeats.join(", ")} are already booked.`,
+      });
+    }
+
+    // Update seat status to 'booked'
+    selectSeats.forEach((seatNum) => {
+      user.seatArray[seatNum - 1] = { [seatNum]: "booked" };
+    });
+
+    await user.save();
+    return res.status(200).json({
+      message: `Seats ${selectSeats.join(", ")} successfully booked.`,
+    });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
   }
 };
