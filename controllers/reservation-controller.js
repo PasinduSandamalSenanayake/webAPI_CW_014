@@ -13,7 +13,7 @@ exports.createReservation = async (req, res) => {
     routeId,
     busId,
     tripId,
-    price,
+    // price,
   } = req.body;
 
   // Validate required fields
@@ -28,6 +28,33 @@ exports.createReservation = async (req, res) => {
   ) {
     return res.status(400).json({ message: "All fields are required" });
   }
+
+  const routeResponse = await axios.get(
+    `https://webapi-cw-014-183873252446.asia-south1.run.app/routes/${routeId}`
+  );
+  const startPlace = routeResponse.data.route.startPlace;
+  const endPlace = routeResponse.data.route.endPlace;
+  const stopPlace = routeResponse.data.route.stopPlaces[0];
+  const price1 = routeResponse.data.route.priceOne;
+  const price2 = routeResponse.data.route.priceTwo;
+  const price3 = routeResponse.data.route.priceThree;
+  // if (!stopPlace) {
+  //   stopPlace == null;
+  //   price2 == 0;
+  //   price3 == 0;
+  // }
+  let price = 0;
+
+  // Calculate the price based on the route and destination
+  if (startPlace === destinationFrom && endPlace === destinationTo) {
+    price = price1 * seatCount;
+  } else if (startPlace === destinationFrom && stopPlace === destinationTo) {
+    price = price2 * seatCount;
+  } else if (stopPlace === destinationFrom && endPlace === destinationTo) {
+    price = price3 * seatCount;
+  }
+  console.log(price1, price2, price3);
+  console.log(startPlace, endPlace, stopPlace);
 
   try {
     const seatUpdateResponse = await axios.put(
@@ -90,7 +117,7 @@ exports.getAllReservations = async (req, res) => {
             `https://webapi-cw-014-183873252446.asia-south1.run.app/buses/${reservation.busId}`
           );
           const busNumber = busResponse.data.data.busNumber;
-          const seatCount = busResponse.data.data.seatCount;
+          const busSeatCount = busResponse.data.data.seatCount;
 
           // trip details
           const tripResponse = await axios.get(
@@ -104,7 +131,7 @@ exports.getAllReservations = async (req, res) => {
             startPlace,
             endPlace,
             busNumber,
-            seatCount,
+            busSeatCount,
             startTime,
           };
         } catch (error) {
@@ -117,7 +144,7 @@ exports.getAllReservations = async (req, res) => {
             startPlace: "Unknown",
             endPlace: "Unknown",
             busNumber: "Unknown",
-            seatCount: "Unknown",
+            busSeatCount: "Unknown",
             startTime: "Unknown",
           };
         }
