@@ -236,7 +236,7 @@ exports.update_seats = async (req, res) => {
     // Find seats that are already booked
     const alreadyBookedSeats = [];
     selectSeats.forEach((seatNum) => {
-      const seatStatus = trip.seatArray[seatNum - 1]; // Use `trip` instead of `user`
+      const seatStatus = trip.availableSeatArray[seatNum - 1]; // Use `trip` instead of `user`
       if (seatStatus && seatStatus[seatNum] === "booked") {
         alreadyBookedSeats.push(seatNum);
       }
@@ -250,7 +250,7 @@ exports.update_seats = async (req, res) => {
 
     // Update seat status to 'booked'
     selectSeats.forEach((seatNum) => {
-      trip.seatArray[seatNum - 1] = { [seatNum]: "booked" }; // Use `trip` instead of `user`
+      trip.availableSeatArray[seatNum - 1] = { [seatNum]: "booked" }; // Use `trip` instead of `user`
     });
 
     await trip.save(); // Save changes to the trip document
