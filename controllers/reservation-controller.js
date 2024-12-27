@@ -46,15 +46,17 @@ exports.createReservation = async (req, res) => {
   let price = 0;
 
   // Calculate the price based on the route and destination
-  if (startPlace === destinationFrom && endPlace === destinationTo) {
+  if (startPlace === destinationTo && endPlace === destinationFrom) {
     price = price1 * seatCount;
-  } else if (startPlace === destinationFrom && stopPlace === destinationTo) {
+  } else if (startPlace === destinationTo && stopPlace === destinationFrom) {
     price = price2 * seatCount;
-  } else if (stopPlace === destinationFrom && endPlace === destinationTo) {
+  } else if (stopPlace === destinationTo && endPlace === destinationFrom) {
     price = price3 * seatCount;
   }
   console.log(price1, price2, price3);
   console.log(startPlace, endPlace, stopPlace);
+  console.log(destinationTo, destinationFrom);
+  console.log(price);
 
   try {
     const seatUpdateResponse = await axios.put(
