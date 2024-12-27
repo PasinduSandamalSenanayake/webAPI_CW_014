@@ -182,61 +182,21 @@ exports.delete_trip = async (req, res) => {
   }
 };
 
-// exports.update_seats = async (req, res) => {
-//   const { selectSeats } = req.body; // Array of seat numbers
-//   const { tripId } = req.params;
-
-//   try {
-//     const trip = await Trips.findById(tripId);
-//     if (!trip) {
-//       return res.status(404).json({ error: "User not found" });
-//     }
-
-//     // Find seats that are already booked
-//     const alreadyBookedSeats = [];
-//     selectSeats.forEach((seatNum) => {
-//       const seatStatus = trip.seatArray[seatNum - 1];
-//       if (seatStatus && seatStatus[seatNum] === "booked") {
-//         alreadyBookedSeats.push(seatNum);
-//       }
-//     });
-
-//     if (alreadyBookedSeats.length > 0) {
-//       return res.status(400).json({
-//         error: `Seats ${alreadyBookedSeats.join(", ")} are already booked.`,
-//       });
-//     }
-
-//     // Update seat status to 'booked'
-//     selectSeats.forEach((seatNum) => {
-//       trip.seatArray[seatNum - 1] = { [seatNum]: "booked" };
-//     });
-
-//     await trip.save();
-//     return res.status(200).json({
-//       message: `Seats ${selectSeats.join(", ")} successfully booked.`,
-//     });
-//   } catch (err) {
-//     return res.status(500).json({
-//       error: err.message,
-//     });
-//   }
-// };
-
+// update seats
 exports.update_seats = async (req, res) => {
   const { selectSeats } = req.body; // Array of seat numbers
   const { tripId } = req.params;
 
   try {
-    const trip = await Trips.findById(tripId); // Correct variable name
+    const trip = await Trips.findById(tripId);
     if (!trip) {
-      return res.status(404).json({ error: "Trip not found" }); // Updated error message
+      return res.status(404).json({ error: "Trip not found" });
     }
 
     // Find seats that are already booked
     const alreadyBookedSeats = [];
     selectSeats.forEach((seatNum) => {
-      const seatStatus = trip.availableSeatArray[seatNum - 1]; // Use `trip` instead of `user`
+      const seatStatus = trip.availableSeatArray[seatNum - 1];
       if (seatStatus && seatStatus[seatNum] === "booked") {
         alreadyBookedSeats.push(seatNum);
       }
@@ -250,12 +210,16 @@ exports.update_seats = async (req, res) => {
 
     // Update seat status to 'booked'
     selectSeats.forEach((seatNum) => {
-      trip.availableSeatArray[seatNum - 1] = { [seatNum]: "booked" }; // Use `trip` instead of `user`
+      trip.availableSeatArray[seatNum - 1] = { [seatNum]: "booked" };
     });
+
+    // Reduce available seat count
+    trip.availableSeats -= selectSeats.length;
 
     await trip.save(); // Save changes to the trip document
     return res.status(200).json({
       message: `Seats ${selectSeats.join(", ")} successfully booked.`,
+      availableSeats: trip.availableSeats,
     });
   } catch (err) {
     return res.status(500).json({
@@ -263,48 +227,3 @@ exports.update_seats = async (req, res) => {
     });
   }
 };
-
-// exports.update_seats = async (req, res) => {
-//   const { selectSeats } = req.body; // Array of seat numbers
-//   const { tripId } = req.params;
-
-//   try {
-//     const trip = await Trips.findById(tripId);
-//     if (!trip) {
-//       return res.status(404).json({ error: "Trip not found" });
-//     }
-
-//     // Find seats that are already booked
-//     const alreadyBookedSeats = [];
-//     selectSeats.forEach((seatNum) => {
-//       const seatStatus = trip.availableSeatArray[seatNum - 1];
-//       if (seatStatus && seatStatus[seatNum] === "booked") {
-//         alreadyBookedSeats.push(seatNum);
-//       }
-//     });
-
-//     if (alreadyBookedSeats.length > 0) {
-//       return res.status(400).json({
-//         error: `Seats ${alreadyBookedSeats.join(", ")} are already booked.`,
-//       });
-//     }
-
-//     // Update seat status to 'booked'
-//     selectSeats.forEach((seatNum) => {
-//       trip.availableSeatArray[seatNum - 1] = { [seatNum]: "booked" };
-//     });
-
-//     // Reduce available seat count
-//     trip.availableSeats -= selectSeats.length;
-
-//     await trip.save(); // Save changes to the trip document
-//     return res.status(200).json({
-//       message: `Seats ${selectSeats.join(", ")} successfully booked.`,
-//       availableSeats: trip.availableSeats,
-//     });
-//   } catch (err) {
-//     return res.status(500).json({
-//       error: err.message,
-//     });
-//   }
-// };
