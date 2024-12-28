@@ -14,25 +14,45 @@ const bookingRoutes = require("./routes/book-route");
 
 const app = express();
 
-//  frontend code
-// Enable CORS Middleware (cleaned up)
+// //  frontend code
+// // Enable CORS Middleware (cleaned up)
+// app.use(
+//   cors({
+//     origin: "https://webapicw.vercel.app", // Replace with your frontend URL
+//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed methods
+//     allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+//     credentials: true, // If you're sending cookies or authentication headers
+//   })
+// );
+
+// // Middleware to handle OPTIONS requests (preflight)
+// app.options("*", (req, res) => {
+//   res.header("Access-Control-Allow-Origin", "https://webapicw.vercel.app"); // https://localhost:3000
+//   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+//   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+//   res.header("Access-Control-Allow-Credentials", "true");
+//   res.status(204).send(); // No content for OPTIONS
+// });
+
+const allowedOrigins = ["https://webapicw.vercel.app"]; // Add other origins if needed
+
 app.use(
   cors({
-    origin: "https://webapicw.vercel.app", // Replace with your frontend URL
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed methods
-    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
-    credentials: true, // If you're sending cookies or authentication headers
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true, // Enable credentials if needed
   })
 );
 
-// Middleware to handle OPTIONS requests (preflight)
-app.options("*", (req, res) => {
-  res.header("Access-Control-Allow-Origin", "https://webapicw.vercel.app");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.status(204).send(); // No content for OPTIONS
-});
+// Middleware to handle preflight requests
+app.options("*", cors());
 
 app.use(bodyParser.json());
 
