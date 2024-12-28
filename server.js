@@ -18,7 +18,7 @@ const app = express();
 // Enable CORS Middleware (cleaned up)
 app.use(
   cors({
-    origin: "https://webapicw.vercel.app/", // Replace with your frontend URL
+    origin: "https://webapicw.vercel.app", // Replace with your frontend URL
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed methods
     allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
     credentials: true, // If you're sending cookies or authentication headers
@@ -27,7 +27,7 @@ app.use(
 
 // Middleware to handle OPTIONS requests (preflight)
 app.options("*", (req, res) => {
-  res.header("Access-Control-Allow-Origin", "https://webapicw.vercel.app/");
+  res.header("Access-Control-Allow-Origin", "https://webapicw.vercel.app");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.header("Access-Control-Allow-Credentials", "true");
