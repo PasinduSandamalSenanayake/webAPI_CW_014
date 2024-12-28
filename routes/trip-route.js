@@ -9,8 +9,8 @@ route.post("/", tripController.create_trip);
 // Get all trips
 route.get(
   "/",
-  //   authenticate,
-  //   authorize(["admin"]),
+  authenticate,
+  authorize(["admin"]),
   tripController.get_all_trips
 );
 

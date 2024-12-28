@@ -13,6 +13,27 @@ const reservationRoutes = require("./routes/reservation-route");
 const bookingRoutes = require("./routes/book-route");
 
 const app = express();
+
+//  frontend code
+// Enable CORS Middleware (cleaned up)
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Replace with your frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed methods
+    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+    credentials: true, // If you're sending cookies or authentication headers
+  })
+);
+
+// Middleware to handle OPTIONS requests (preflight)
+app.options("*", (req, res) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.status(204).send(); // No content for OPTIONS
+});
+
 app.use(bodyParser.json());
 
 // Routes
