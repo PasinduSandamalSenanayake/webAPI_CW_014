@@ -1,0 +1,171 @@
+openapi: 3.0.1
+info:
+  title: Bus Management API
+  description: API for managing bus routes and details.
+  version: 1.0.0
+servers:
+  - url: https://{host}/api
+    description: Default server
+    variables:
+      host:
+        default: https://webapi-cw-014-183873252446.asia-south1.run.app # Update with your server's hostname or IP
+
+paths:
+  /buses:
+    post:
+      summary: Create a new bus
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                busType:
+                  type: string
+                  description: Type of the bus (AC, Normal, Semi-Luxury).
+                busNumber:
+                  type: string
+                  description: Unique bus number.
+                seatCount:
+                  type: integer
+                  description: Number of seats in the bus.
+              required:
+                - busType
+                - busNumber
+                - seatCount
+      responses:
+        "201":
+          description: Bus created successfully
+        "400":
+          description: Missing required fields or bus number already exists
+        "500":
+          description: Internal server error
+
+    get:
+      summary: Get all buses
+      responses:
+        "200":
+          description: List of all buses
+        "500":
+          description: Internal server error
+
+  /buses/AC:
+    get:
+      summary: Get all AC buses
+      responses:
+        "200":
+          description: List of AC buses
+        "404":
+          description: No AC buses found
+        "500":
+          description: Internal server error
+
+  /buses/Normal:
+    get:
+      summary: Get all Normal buses
+      responses:
+        "200":
+          description: List of Normal buses
+        "404":
+          description: No Normal buses found
+        "500":
+          description: Internal server error
+
+  /buses/Semi-Luxury:
+    get:
+      summary: Get all Semi-Luxury buses
+      responses:
+        "200":
+          description: List of Semi-Luxury buses
+        "404":
+          description: No Semi-Luxury buses found
+        "500":
+          description: Internal server error
+
+  /buses/{id}:
+    get:
+      summary: Get a bus by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the bus to retrieve
+      responses:
+        "200":
+          description: Bus details
+        "404":
+          description: Bus not found
+        "500":
+          description: Internal server error
+
+    patch:
+      summary: Update a bus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the bus to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                busType:
+                  type: string
+                  description: Type of the bus (AC, Normal, Semi-Luxury).
+                busNumber:
+                  type: string
+                  description: Unique bus number.
+                seatCount:
+                  type: integer
+                  description: Number of seats in the bus.
+                busStatus:
+                  type: string
+                  description: Status of the bus.
+      responses:
+        "200":
+          description: Bus updated successfully
+        "404":
+          description: Bus not found
+        "500":
+          description: Internal server error
+
+    delete:
+      summary: Delete a bus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the bus to delete
+      responses:
+        "200":
+          description: Bus deleted successfully
+        "404":
+          description: Bus not found
+        "500":
+          description: Internal server error
+
+  /buses/bus:
+    get:
+      summary: Get all buses by type
+      parameters:
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Type of the bus (AC, Normal, Semi-Luxury)
+      responses:
+        "200":
+          description: List of buses by type
+        "500":
+          description: Internal server error
