@@ -3,12 +3,21 @@ info:
   title: Bus Management API
   description: API for managing bus routes and details.
   version: "1.0.0"
-host: webapi-cw-014-183873252446.asia-south1.run.app
 basePath: /api
 schemes:
   - https
 paths:
   /buses:
+    get:
+      summary: Get all buses
+      operationId: getAllBuses
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/buses/
+      responses:
+        200:
+          description: List of all buses
+        500:
+          description: Internal server error
     post:
       summary: Create a new bus
       operationId: createBus
@@ -23,13 +32,10 @@ paths:
             properties:
               busType:
                 type: string
-                description: Type of the bus (AC, Normal, Semi-Luxury).
               busNumber:
                 type: string
-                description: Unique bus number.
               seatCount:
                 type: integer
-                description: Number of seats in the bus.
             required:
               - busType
               - busNumber
@@ -38,94 +44,20 @@ paths:
         201:
           description: Bus created successfully
         400:
-          description: Missing required fields or bus number already exists
+          description: Missing required fields
         500:
           description: Internal server error
-
-    get:
-      summary: Get all buses
-      operationId: getAllBuses
-      x-google-backend:
-        address: https://webapi-cw-014-183873252446.asia-south1.run.app
-      responses:
-        200:
-          description: List of all buses
-        500:
-          description: Internal server error
-
-  /buses/AC:
-    get:
-      summary: Get all AC buses
-      operationId: getAllAcBuses
-      x-google-backend:
-        address: https://webapi-cw-014-183873252446.asia-south1.run.app
-      responses:
-        200:
-          description: List of AC buses
-        404:
-          description: No AC buses found
-        500:
-          description: Internal server error
-
-  /buses/Normal:
-    get:
-      summary: Get all Normal buses
-      operationId: getAllNormalBuses
-      x-google-backend:
-        address: https://webapi-cw-014-183873252446.asia-south1.run.app
-      responses:
-        200:
-          description: List of Normal buses
-        404:
-          description: No Normal buses found
-        500:
-          description: Internal server error
-
-  /buses/Semi-Luxury:
-    get:
-      summary: Get all Semi-Luxury buses
-      operationId: getAllSemiLuxuryBuses
-      x-google-backend:
-        address: https://webapi-cw-014-183873252446.asia-south1.run.app
-      responses:
-        200:
-          description: List of Semi-Luxury buses
-        404:
-          description: No Semi-Luxury buses found
-        500:
-          description: Internal server error
-
   /buses/{id}:
-    get:
-      summary: Get a bus by ID
-      operationId: getBusById
-      x-google-backend:
-        address: https://webapi-cw-014-183873252446.asia-south1.run.app
-      parameters:
-        - name: id
-          in: path
-          required: true
-          type: string
-          description: ID of the bus to retrieve
-      responses:
-        200:
-          description: Bus details
-        404:
-          description: Bus not found
-        500:
-          description: Internal server error
-
     patch:
       summary: Update a bus
       operationId: updateBus
       x-google-backend:
-        address: https://webapi-cw-014-183873252446.asia-south1.run.app
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/buses/{id}
       parameters:
         - name: id
           in: path
           required: true
           type: string
-          description: ID of the bus to update
         - in: body
           name: body
           required: true
@@ -134,16 +66,12 @@ paths:
             properties:
               busType:
                 type: string
-                description: Type of the bus (AC, Normal, Semi-Luxury).
               busNumber:
                 type: string
-                description: Unique bus number.
               seatCount:
                 type: integer
-                description: Number of seats in the bus.
               busStatus:
                 type: string
-                description: Status of the bus.
       responses:
         200:
           description: Bus updated successfully
@@ -151,18 +79,16 @@ paths:
           description: Bus not found
         500:
           description: Internal server error
-
     delete:
       summary: Delete a bus
       operationId: deleteBus
       x-google-backend:
-        address: https://webapi-cw-014-183873252446.asia-south1.run.app
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/buses/{id}
       parameters:
         - name: id
           in: path
           required: true
           type: string
-          description: ID of the bus to delete
       responses:
         200:
           description: Bus deleted successfully
@@ -170,21 +96,549 @@ paths:
           description: Bus not found
         500:
           description: Internal server error
-
+    get:
+      summary: Get a bus by ID
+      operationId: getBusById
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/buses/{id}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Bus details retrieved successfully
+        404:
+          description: Bus not found
+        500:
+          description: Internal server error
+  /buses/AC:
+    get:
+      summary: Get all AC buses
+      operationId: getAllACBuses
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/buses/AC
+      responses:
+        200:
+          description: List of all AC buses
+        404:
+          description: No AC buses found
+        500:
+          description: Internal server error
+  /buses/Normal:
+    get:
+      summary: Get all Normal buses
+      operationId: getAllNormalBuses
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/buses/Normal
+      responses:
+        200:
+          description: List of all Normal buses
+        404:
+          description: No Normal buses found
+        500:
+          description: Internal server error
+  /buses/Semi-Luxury:
+    get:
+      summary: Get all Semi-Luxury buses
+      operationId: getAllSemiLuxuryBuses
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/buses/Semi-Luxury
+      responses:
+        200:
+          description: List of all Semi-Luxury buses
+        404:
+          description: No Semi-Luxury buses found
+        500:
+          description: Internal server error
   /buses/bus:
     get:
       summary: Get all buses by type
       operationId: getAllBusesByType
       x-google-backend:
-        address: https://webapi-cw-014-183873252446.asia-south1.run.app
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/buses/bus
       parameters:
         - name: type
           in: query
           required: false
           type: string
-          description: Type of the bus (AC, Normal, Semi-Luxury)
       responses:
         200:
           description: List of buses by type
+        500:
+          description: Internal server error
+  /routes:
+    get:
+      summary: Get all routes
+      operationId: getAllRoutes
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/routes/
+      responses:
+        200:
+          description: List of all routes
+        500:
+          description: Internal server error
+    post:
+      summary: Create a new route
+      operationId: createRoute
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/routes/
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              startPlace:
+                type: string
+              endPlace:
+                type: string
+              stopPlaces:
+                type: array
+                items:
+                  type: string
+              busRouteNumber:
+                type: string
+              priceOne:
+                type: number
+              priceTwo:
+                type: number
+              priceThree:
+                type: number
+            required:
+              - startPlace
+              - endPlace
+              - busRouteNumber
+      responses:
+        201:
+          description: Route created successfully
+        400:
+          description: Missing required fields
+        500:
+          description: Internal server error
+  /routes/{id}:
+    get:
+      summary: Get a route by ID
+      operationId: getRouteById
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/routes/{id}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Route details retrieved successfully
+        404:
+          description: Route not found
+        500:
+          description: Internal server error
+    put:
+      summary: Update a route
+      operationId: updateRoute
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/routes/{id}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              startPlace:
+                type: string
+              endPlace:
+                type: string
+              stopPlaces:
+                type: array
+                items:
+                  type: string
+              busRouteNumber:
+                type: string
+              priceOne:
+                type: number
+              priceTwo:
+                type: number
+              priceThree:
+                type: number
+      responses:
+        200:
+          description: Route updated successfully
+        404:
+          description: Route not found
+        500:
+          description: Internal server error
+    delete:
+      summary: Delete a route
+      operationId: deleteRoute
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/routes/{id}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Route deleted successfully
+        404:
+          description: Route not found
+        500:
+          description: Internal server error
+  /auth/register:
+    post:
+      summary: User Registration
+      operationId: userRegister
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/auth/register
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              firstName:
+                type: string
+              lastName:
+                type: string
+              age:
+                type: integer
+              email:
+                type: string
+              password:
+                type: string
+              mobile:
+                type: string
+              nic:
+                type: string
+              role:
+                type: string
+            required:
+              - firstName
+              - lastName
+              - email
+              - password
+      responses:
+        201:
+          description: User created successfully
+        409:
+          description: Email already exists
+        500:
+          description: Internal server error
+  /auth/login:
+    post:
+      summary: User Login
+      operationId: userLogin
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/auth/login
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+            required:
+              - email
+              - password
+      responses:
+        200:
+          description: Login successful
+        400:
+          description: Invalid credentials
+        500:
+          description: Internal server error
+  /auth/users/{id}:
+    delete:
+      summary: Delete a user
+      operationId: deleteUser
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/auth/users/{id}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: User deleted successfully
+        404:
+          description: User not found
+        500:
+          description: Internal server error
+    patch:
+      summary: Update a user
+      operationId: updateUser
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/auth/users/{id}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              firstName:
+                type: string
+              lastName:
+                type: string
+              age:
+                type: integer
+              email:
+                type: string
+              password:
+                type: string
+              mobile:
+                type: string
+              nic:
+                type: string
+              role:
+                type: string
+      responses:
+        200:
+          description: User updated successfully
+        404:
+          description: User not found
+        500:
+          description: Internal server error
+  /auth/users/admins:
+    get:
+      summary: Get all admins
+      operationId: getAllAdmins
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/auth/users/admins
+      responses:
+        200:
+          description: List of all admins
+        404:
+          description: No admins found
+        500:
+          description: Internal server error
+  /auth/users/operators:
+    get:
+      summary: Get all operators
+      operationId: getAllOperators
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/auth/users/operators
+      responses:
+        200:
+          description: List of all operators
+        404:
+          description: No operators found
+        500:
+          description: Internal server error
+  /auth/users/commuters:
+    get:
+      summary: Get all commuters
+      operationId: getAllCommuters
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/auth/users/commuters
+      responses:
+        200:
+          description: List of all commuters
+        404:
+          description: No commuters found
+        500:
+          description: Internal server error
+
+  /reservations:
+    post:
+      summary: Create a reservation
+      operationId: createReservation
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/reservations/
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              destinationTo:
+                type: string
+              destinationFrom:
+                type: string
+              seatCount:
+                type: integer
+              selectSeats:
+                type: array
+                items:
+                  type: string
+              routeId:
+                type: string
+              busId:
+                type: string
+              tripId:
+                type: string
+            required:
+              - destinationTo
+              - destinationFrom
+              - seatCount
+              - selectSeats
+              - routeId
+              - busId
+              - tripId
+      responses:
+        201:
+          description: Reservation created successfully
+        400:
+          description: Missing required fields or failed seat update
+        500:
+          description: Internal server error
+    get:
+      summary: Get all reservations
+      operationId: getAllReservations
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/reservations/
+      responses:
+        200:
+          description: List of all reservations
+        500:
+          description: Internal server error
+  /reservations/{id}:
+    get:
+      summary: Get a reservation by ID
+      operationId: getReservationById
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/reservations/{id}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Reservation details retrieved successfully
+        404:
+          description: Reservation not found
+        500:
+          description: Internal server error
+    delete:
+      summary: Delete a reservation
+      operationId: deleteReservation
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/reservations/{id}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Reservation deleted successfully
+        404:
+          description: Reservation not found
+        500:
+          description: Internal server error
+
+  /trips:
+    post:
+      summary: Create a new trip
+      operationId: createTrip
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/trips/
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              tripDetails:
+                type: object
+      responses:
+        201:
+          description: Trip created successfully
+        400:
+          description: Invalid input
+        500:
+          description: Internal server error
+    get:
+      summary: Get all trips
+      operationId: getAllTrips
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/trips/
+      responses:
+        200:
+          description: List of all trips
+        500:
+          description: Internal server error
+  /trips/{id}:
+    get:
+      summary: Get a trip by ID
+      operationId: getTripById
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/trips/{id}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Trip details retrieved successfully
+        404:
+          description: Trip not found
+        500:
+          description: Internal server error
+    delete:
+      summary: Delete a trip
+      operationId: deleteTrip
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/trips/{id}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Trip deleted successfully
+        404:
+          description: Trip not found
+        500:
+          description: Internal server error
+  /trips/{tripId}/bookedSeats:
+    put:
+      summary: Update booked seats for a trip
+      operationId: updateBookedSeats
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app/trips/{tripId}/bookedSeats
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              bookedSeats:
+                type: array
+                items:
+                  type: string
+      responses:
+        200:
+          description: Booked seats updated successfully
+        400:
+          description: Invalid input
         500:
           description: Internal server error
