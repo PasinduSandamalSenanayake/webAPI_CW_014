@@ -3,10 +3,10 @@ info:
   title: Bus Management API
   description: API for managing bus routes and details.
   version: "1.0.0"
-host: localhost:3000
+host: webapi-cw-014-183873252446.asia-south1.run.app
 basePath: /api
 schemes:
-  - http
+  - https
 paths:
   /buses:
     post:
