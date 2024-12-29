@@ -11,6 +11,9 @@ paths:
   /buses:
     post:
       summary: Create a new bus
+      operationId: createBus
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app
       parameters:
         - in: body
           name: body
@@ -41,6 +44,9 @@ paths:
 
     get:
       summary: Get all buses
+      operationId: getAllBuses
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app
       responses:
         200:
           description: List of all buses
@@ -50,6 +56,9 @@ paths:
   /buses/AC:
     get:
       summary: Get all AC buses
+      operationId: getAllAcBuses
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app
       responses:
         200:
           description: List of AC buses
@@ -61,6 +70,9 @@ paths:
   /buses/Normal:
     get:
       summary: Get all Normal buses
+      operationId: getAllNormalBuses
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app
       responses:
         200:
           description: List of Normal buses
@@ -72,6 +84,9 @@ paths:
   /buses/Semi-Luxury:
     get:
       summary: Get all Semi-Luxury buses
+      operationId: getAllSemiLuxuryBuses
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app
       responses:
         200:
           description: List of Semi-Luxury buses
@@ -83,6 +98,9 @@ paths:
   /buses/{id}:
     get:
       summary: Get a bus by ID
+      operationId: getBusById
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app
       parameters:
         - name: id
           in: path
@@ -99,6 +117,9 @@ paths:
 
     patch:
       summary: Update a bus
+      operationId: updateBus
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app
       parameters:
         - name: id
           in: path
@@ -133,6 +154,9 @@ paths:
 
     delete:
       summary: Delete a bus
+      operationId: deleteBus
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app
       parameters:
         - name: id
           in: path
@@ -150,6 +174,9 @@ paths:
   /buses/bus:
     get:
       summary: Get all buses by type
+      operationId: getAllBusesByType
+      x-google-backend:
+        address: https://webapi-cw-014-183873252446.asia-south1.run.app
       parameters:
         - name: type
           in: query
