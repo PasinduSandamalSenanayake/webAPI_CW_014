@@ -14,8 +14,8 @@ route.post(
 // Get all trips
 route.get(
   "/",
-  authenticate,
-  authorize(["operator"]),
+  // authenticate,
+  // authorize(["operator"]),
   tripController.get_all_trips
 );
 
