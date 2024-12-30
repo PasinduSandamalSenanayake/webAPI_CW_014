@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema(
     },
     availableSeats: { type: Number, required: true },
     availableSeatArray: { type: Array },
+    operatorId: { type: String, required: true },
   },
   { collection: "trip" }
 );

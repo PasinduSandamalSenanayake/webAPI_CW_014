@@ -41,6 +41,7 @@ exports.create_trip = async (req, res) => {
       busId,
       availableSeats,
       availableSeatArray,
+      operatorId: req.user._id,
     });
     await trip.save();
     res.status(201).json({ message: "Trip created successfully", data: trip });
@@ -225,5 +226,19 @@ exports.update_seats = async (req, res) => {
     return res.status(500).json({
       error: err.message,
     });
+  }
+};
+
+// Get a operator's trips
+exports.get_operator_trips = async (req, res) => {
+  try {
+    const operatorId = req.params.operatorId;
+    const trips = await Trips.find({ operatorId: operatorId });
+    res.status(200).json({
+      message: "Success",
+      data: trips,
+    });
+  } catch (err) {
+    res.status(400).send(err.message);
   }
 };

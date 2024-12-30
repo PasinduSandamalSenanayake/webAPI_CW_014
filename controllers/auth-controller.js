@@ -62,18 +62,26 @@ exports.user_register = (req, res, next) => {
 
 // User Login
 exports.user_login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, role } = req.body;
 
-  const user = await User.findOne({ email });
+  // Check if all required fields are provided
+  if (!email || !password || !role) {
+    return res.status(400).send("Email, password, and role are required");
+  }
+
+  // Find the user by email
+  const user = await User.findOne({ email, role });
   if (!user) {
     return res.status(400).send("Invalid credentials");
   }
 
+  // Validate the password
   const validPassword = await bcrypt.compare(password, user.password);
   if (!validPassword) {
     return res.status(400).send("Invalid credentials");
   }
 
+  // Generate a JWT token
   const token = jwt.sign(
     {
       _id: user._id,
@@ -85,7 +93,10 @@ exports.user_login = async (req, res) => {
     }
   );
 
-  res.header("authentication", token).send(`token: ${token}`);
+  // Send the token in the response header
+  res
+    .header("authentication", token)
+    .send({ message: "Login successful", token });
 };
 
 // Delete a user
