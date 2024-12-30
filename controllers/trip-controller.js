@@ -65,6 +65,9 @@ exports.get_all_trips = async (req, res) => {
           );
           const startPlace = routeResponse.data.route.startPlace;
           const endPlace = routeResponse.data.route.endPlace;
+          const price1 = routeResponse.data.route.priceOne;
+          const price2 = routeResponse.data.route.priceTwo;
+          const price3 = routeResponse.data.route.priceThree;
 
           // bus details
           const busResponse = await axios.get(
@@ -79,6 +82,9 @@ exports.get_all_trips = async (req, res) => {
             endPlace,
             busNumber,
             seatCount,
+            price1,
+            price2,
+            price3,
           };
         } catch (error) {
           console.error(
