@@ -12,12 +12,7 @@ route.post(
 );
 
 // Get all trips
-route.get(
-  "/",
-  // authenticate,
-  // authorize(["operator"]),
-  tripController.get_all_trips
-);
+route.get("/", tripController.get_all_trips);
 
 // Get a trip by id
 route.get("/:id", tripController.get_trip_by_id);
