@@ -34,7 +34,7 @@ const app = express();
 //   res.status(204).send(); // No content for OPTIONS
 // });
 
-const allowedOrigins = ["http://localhost:3000"]; // Add other origins if needed  https://webapicw.vercel.app   http://localhost:3000
+const allowedOrigins = ["https://webapicw.vercel.app"]; // Add other origins if needed  https://webapicw.vercel.app   http://localhost:3000
 
 app.use(
   cors({
